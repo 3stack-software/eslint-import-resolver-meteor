@@ -18,13 +18,15 @@ exports.resolve = function (source, file, config) {
     return resolveMeteorPackage(source, meteorRoot)
   }
 
-  var meteorSource = source
+  let meteorSource = source
   if (source.startsWith('/')) {
-    var meteorRoot = findMeteorRoot(file, meteorDir)
-    meteorSource = path.resolve(meteorRoot, source.substr(1))
+    let meteorRoot = findMeteorRoot(file, meteorDir)
+    const currentDir = path.dirname(file);
+    const absoluteSource = path.resolve(meteorRoot, source.substr(1));
+    meteorSource = path.relative(currentDir, absoluteSource);
   }
 
-  var fileUsingSlash = file.split(path.sep).join('/')
+  let fileUsingSlash = file.split(path.sep).join('/')
   if (!isNodeModuleImport(source) && (isClientInServer(source, fileUsingSlash) || isServerInClient(source, fileUsingSlash))) {
     return { found: false }
   }
